@@ -19,6 +19,15 @@
     - "{{ gluster_brick_dir }}"
     - "{{ gluster_mount_dir }}"
 
+#################################################
+#
+# That is a lot of shell module call...
+# Looks like a https://fr.wikipedia.org/wiki/Code_smell to me
+#
+# Could that be a case for using this instead ?
+# http://docs.ansible.com/ansible/gluster_volume_module.html
+#
+#################################################
 # Gluster volume configuration.
 - name: Check if Gluster volumes already exist.
   shell: "gluster volume info"
