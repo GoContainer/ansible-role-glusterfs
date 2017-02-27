@@ -1,12 +1,12 @@
 ---
-- name: Define TPM private ip
-  set_fact:
-    gluster_servers_ips_tmp="{% for host in groups['all'] %}{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}|{% endfor %}"
+- set_fact:
+    gluster_servers_ips_init: "{{ (gluster_servers_ips|default([])) + [hostvars[item].ansible_default_ipv4.address] }}"
+    glusterfs_create_init: "{{ (glusterfs_create_init|default([])) + [hostvars[item].ansible_default_ipv4.address + ':' + gluster_brick_dir] }}"
+  with_items: "{{ groups['all'] }}"
 
-- name: Define glusterfs_create
-  set_fact:
-    glusterfs_create="{% for host in groups['all'] -%}{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:{{ gluster_brick_dir }}{%- if not loop.last %} {% endif -%}{%- endfor %}"
-
+- set_fact:
+    gluster_servers_ips_tmp: "{{ gluster_servers_ips_init|join('|') }}"
+    glusterfs_create: "{{ gluster_servers_ips_init|join(' ') }}"
 
 - name: Ensure Gluster brick and mount directories exist.
   file:
