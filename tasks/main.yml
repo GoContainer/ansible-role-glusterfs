@@ -12,6 +12,3 @@
     name: "{{ glusterfs_daemon }}"
     state: started
     enabled: yes
-
-- include: configure-glusterfs.yml
-
