@@ -1,14 +1,17 @@
 ---
-# Include variables and define needed variables.
-- name: Include OS-specific variables.
-  include_vars: "{{ ansible_os_family }}.yml"
+- name: define the tao to follow
+  set_fact:
+    system_tao: "{{ ansible_os_family|lower }}"
 
-# Setup/install tasks.
-- include: setup-RedHat.yml
-  when: ansible_os_family == 'RedHat'
+- include_vars: "{{ system_tao }}.yml"
 
-- include: setup-Debian.yml
-  when: ansible_os_family == 'Debian'
+- include: "setup-{{ system_tao }}.yml"
 
-- name: Ensure GlusterFS is started and enabled at boot.
-  service: "name={{ glusterfs_daemon }} state=started enabled=yes"
+- name: ensure GlusterFS is started and enabled at boot
+  service:
+    name: "{{ glusterfs_daemon }}"
+    state: started
+    enabled: yes
+
+- include: configure-glusterfs.yml
+
